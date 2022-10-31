@@ -26,6 +26,11 @@ function changedatetime(row){
         let month = date.toString().substr(4,2);
         let day = date.toString().substr(6,2);
         row[index].expect_date = year + "-" + month + "-" + day;
+        let time = row[index].expect_time;
+        let hour = time.toString().substr(0,2);
+        let min = time.toString().substr(2,2);
+        let sec = time.toString().substr(4,2);
+        row[index].expect_time = hour + ":" + min + ":" + sec;
     }
 
     return row;
@@ -40,23 +45,12 @@ router.post('/', authMiddleware, async function(req, res, next){
         const complete_rate = parseInt(id_rows[0].post_complete / id_rows[0].post_count * 100);
         const wrong_rate = parseInt(id_rows[0].post_wrong / id_rows[0].post_count * 100);
         const miss_rate = parseInt(id_rows[0].post_miss / id_rows[0].post_count * 100);
-        const [rows] = await con.promise().query('select sum(post_cost) as cost from post_info where id = ? and pay_status = \'Y\';',[id]);
-        // const [rows] = await con.promise().query('select * from post_info where id = ?;',[id]);
-        // for (let index = 0; index < rows.length; index++) {
-            //     if (rows[index].post_status == 'Y') {
-            //         continue;
-            //     }
-            //     const element = rows[index].post_cost;
-        //     cost += element;
-        // } 
+        const [rows] = await con.promise().query('select sum(post_cost) as cost from post_info where id = ? and pay_status = \'N\';',[id]);
         
-        // const [group_rows]  = await con.promise().query('select * from group_info where id = ? and group_status =\'N\';',[id]);
-        // const group_id = group_rows[0].group_id;
-        // const [task_info] = await con.promise().query('select post_info.barcode, post_info.expect_date, post_info.post_time, post_info.post_type, post_info.reciever_address, post_info.zone, terminal_list.terminal_name  from post_info cross join terminal_list on post_info.terminal_id = terminal_list.terminal_id where group_id = ?;',[group_id]);
-        var [task_info] = await con.promise().query('select group_info.id, group_info.group_id, post_info.expect_date, post_info.post_time, post_info.zone, terminal_list.terminal_name from group_info inner join post_info on group_info.group_id = post_info.group_id inner join terminal_list on post_info.terminal_id = terminal_list.terminal_id where group_info.id = ? and group_info.group_status = \'N\' GROUP BY group_info.group_id;',[id]);
-        console.log(task_info[0].expect_date);
-        task_info = changedatetime(task_info);
+
+        var [task_info] = await con.promise().query('select post_info.del_id, post_info.post_type, post_info.category, post_info.post_time, post_info.sender_address, post_info.receiver_address, post_info.expect_date, post_info.expect_time, post_info.zone, terminal_list.terminal_name from post_info inner join terminal_list on post_info.terminal_id = terminal_list.terminal_id where post_info.id = ? and (post_status = \'wating\' or post_status = \'ING\'); ',[id]);
         var task_list = task_info;
+        task_list = changedatetime(task_list);
         var result = {
             "code" : 200,
             "data" : {

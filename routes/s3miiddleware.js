@@ -18,7 +18,7 @@ exports.upload = async (req,res) => {
     let decode = Buffer.from(encode, 'base64'); //파일 디코딩
 
     const params = {
-        Bucket: 'carryon-pic',
+        Bucket: '',
         Key: `images/${new Date().toISOString()}.jpeg`,
         Body: decode,
         ContentType: "image/jpeg",

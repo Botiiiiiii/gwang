@@ -29,7 +29,7 @@ router.post('/login', async function(req, res, next) {
     var pw;
 
     try{
-        const [rows, fields] = await con.promise().query('SELECT * FROM user_info WHERE id = ?',[req.body.id]);
+        const [rows, fields] = await con.promise().query('SELECT * FROM user_info WHERE id = ?;',[req.body.id]);
         id = rows[0].id;
         pw = rows[0].pw;
 
@@ -73,7 +73,7 @@ router.post('/echeck', async function(req, res, next){
     var email = req.body.email;
 
     try{
-        var resu = await con.promise().query('SELECT EXISTS (SELECT email FROM user_info where email = ?) as success',[email]);
+        var resu = await con.promise().query('SELECT EXISTS (SELECT email FROM user_info where email = ?) as success;',[email]);
         
         if(resu[0][0].success){
             var result = {
@@ -147,7 +147,7 @@ router.post('/pcheck', async function(req, res, next){
     var phone = req.body.phone;
 
     try{
-        var resu = await con.promise().query('SELECT EXISTS (SELECT phone FROM user_info where phone = ?) as success',[phone])
+        var resu = await con.promise().query('SELECT EXISTS (SELECT phone FROM user_info where phone = ?) as success;',[phone])
 
         if(resu[0][0].success){
             var result = {
@@ -196,7 +196,7 @@ router.post('/regist', async function(req, res, next) { //동의 여부 자동�
 
     while(1){ 
         var id = Math.floor((Math.random() * 88888) + 11111);
-        var resu = await con.promise().query('SELECT EXISTS (SELECT id FROM user_info where id = ?) as success',[id]);
+        var resu = await con.promise().query('SELECT EXISTS (SELECT id FROM user_info where id = ?) as success;',[id]);
         if(!resu[0][0].success){
             break;
         }
@@ -205,7 +205,7 @@ router.post('/regist', async function(req, res, next) { //동의 여부 자동�
     var params = [id, name, pw, email, phone, bank, bank_account,agree];
 
     try{
-        await con.promise().query('INSERT INTO user_info(id, name, pw, email, phone, bank, bank_account,agree) VALUES ?', [[params]]);
+        await con.promise().query('INSERT INTO user_info(id, name, pw, email, phone, bank, bank_account,agree) VALUES ?;', [[params]]);
         var result = {
             "code" : 200,
             "data" : {
@@ -233,7 +233,7 @@ router.post('/bank', async function(req, res, next) { // 중복체크로 변경
     var bank_account = req.body.bank_account;
     
     try{
-        var resu = await con.promise().query('SELECT EXISTS (SELECT bank_account FROM user_info where bank_account = ?) as success',[bank_account]);
+        var resu = await con.promise().query('SELECT EXISTS (SELECT bank_account FROM user_info where bank_account = ?) as success;',[bank_account]);
         
         if(resu[0][0].success){
             var result = {

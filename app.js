@@ -21,8 +21,8 @@ var options = {
     type: '*/*'
   };
 
-app.use(bodyParser.urlencoded({limit: '700kb', extended: true}));
-app.use(bodyParser.json({limit: '700kb'}));
+app.use(bodyParser.urlencoded({limit: '5000kb', extended: true}));
+app.use(bodyParser.json({limit: '5000kb'}));
 app.use(bodyParser.raw(options));
 
 // view engine setup
@@ -40,7 +40,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 var User_process = require('./routes/user');
 var Delivery_process = require ('./routes/delivery');
 var Main_process = require ('./routes/main');
-var Perform_process = require ('./routes/main');
+var Perform_process = require ('./routes/perform');
 
 app.use('/user', User_process);
 app.use('/delivery', Delivery_process);
